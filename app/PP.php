@@ -27,50 +27,56 @@ class PP
 
     public function pushMessage(string $from, string $text): string
     {
+        Log::info("Pushing message", ["from" => $from, "text" => $text]);
         $msg = new PPMessage($from, $text);
         $usr = $this->getUser($from);
-        echo "message: $msg\n";
-        echo "user: $usr\n";
+        Log::info("User", ["user" => $usr]);
 
         if (!$msg->isValid()) {
-            echo "NOT VALID";
+            Log::info("Invalid message", ["msg" => $msg]);
             return "";
         }
 
         if ($msg->cmd == "c") {
+            Log::info("Checking points", ["msg" => $msg]);
             return "@" . $msg->from . ": " . $usr->points;
         }
 
         if ($msg->cmd == "p") {
             if ($this->prediction != NULL) {
+                Log::info("Prediction already exists", ["msg" => $msg]);
                 return "@" . $msg->from . ": there is an active prediction";
             }
 
             $pred = new PPPrediction($msg);
             if (!$pred->valid) {
+                Log::info("Invalid prediction", ["msg" => $msg]);
                 return "@" . $msg->from . ": Invalid prediction syntax";
             }
 
             $this->prediction = $pred;
+            Log::info("Prediction created", ["prediction" => $pred]);
             return "";
         }
 
         if ($msg->cmd == "r") {
-            echo "HAYAYAYAYAYA";
+            Log::info("Resolving prediction", ["msg" => $msg]);
             if ($this->prediction === NULL) {
+                Log::info("No active prediction", ["msg" => $msg]);
                 return "@" . $msg->from . ": there is no active prediction";
             }
 
             $winner = substr($msg->text, 3);
-            echo "winner: \"$winner\"\n";
+            Log::info("Resolving prediction", ["winner" => $winner]);
             $winner = intval($winner);
             if ($winner == 0) {
                 return "@" . $msg->from . ": invalid r syntax e.g.: !r 1";
             }
 
-            echo "predictions: " . count($this->prediction->options) . "\n";
+            Log::info("Resolving prediction", ["options" => count($this->prediction->options)]);
             if (count($this->prediction->options) < $winner) {
-                return "@" . $msg->from . ": FALIDE RESOLVE, Winner to large";
+                Log::error("Winner to large", ["winner" => $winner, "options" => count($this->prediction->options)]);
+                return "@" . $msg->from . ": FAILED RESOLVE, Winner to large";
             }
 
             foreach ($this->users as $user) {
@@ -81,6 +87,7 @@ class PP
         }
 
         if ($this->prediction != NULL) {
+            Log::info("Predicting", ["msg" => $msg]);
             $usr->predict($this->prediction, $msg->pointsPredicted, $msg->predictedIndex);
         }
         return "";

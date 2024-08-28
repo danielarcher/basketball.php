@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Log;
+
 class PPUser
 {
     public string $name = "";
@@ -16,12 +18,12 @@ class PPUser
         $this->predictions = [];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return "user: $this->name -- $this->points";
     }
 
-    public function predict(PPPrediction $pred, int $point, int $option)
+    public function predict(PPPrediction $pred, int $point, int $option): void
     {
         if (isset($this->predictions[$pred->prediction]) && $prev = $this->predictions[$pred->prediction]) {
             if ($prev->resolved) {
@@ -45,16 +47,16 @@ class PPUser
         $pred->options[$option]->points += $pointsBet;
     }
 
-    public function resolve(PPPrediction $pred, int $winningOption)
+    public function resolve(PPPrediction $pred, int $winningOption): void
     {
         $winningTotalPoints = $pred->totalPoints();
         if ($winningTotalPoints == 0) {
             return;
         }
 
-        echo "for $this->name\n";
+        Log::info("Resolving prediction", ["user" => $this->name]);
         foreach ($this->predictions as $k => $v) {
-            echo "prediction: $k => $v\n";
+            Log::info("prediction", ["prediction" => $k, "points" => $v->points, "option" => $v->option]);
         }
 
         if (isset($this->predictions[$pred->prediction]) && $our = $this->predictions[$pred->prediction]) {

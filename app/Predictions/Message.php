@@ -2,6 +2,8 @@
 
 namespace App\Predictions;
 
+use App\Console\Commands\IrcMessage;
+
 class Message
 {
     public string $text;
@@ -22,6 +24,11 @@ class Message
             default => 0,
         };
         $this->predictedIndex = intval($this->cmd) - 1;
+    }
+
+    public static function fromIrcMessage(IrcMessage $msg): self
+    {
+        return new self($msg->username, $msg->message);
     }
 
     public function isSuper(): bool

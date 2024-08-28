@@ -24,11 +24,9 @@ class PredictionHandler
         return Cache::get('pp', new self());
     }
 
-    public function pushMessage(string $from, string $text): string
+    public function pushMessage(Message $msg): string
     {
-        Log::info("Pushing message", ["from" => $from, "text" => $text]);
-        $msg = new Message($from, $text);
-        $usr = $this->getUser($from);
+        $usr = $this->getUser($msg->from);
         Log::info("User", ["user" => $usr]);
 
         if (!$msg->isValid()) {

@@ -34,7 +34,7 @@ class PredictionMessageTest extends TestCase
     public function test_push_message_returns_output(): void
     {
         $pp = new PredictionHandler();
-        $out = $pp->pushMessage("theprimeagen", "!p Will teej make his first basket? !one option !two options !three twitch sucks");
+        $out = $pp->pushMessage(new Message("theprimeagen", "!p Will teej make his first basket? !one option !two options !three twitch sucks"));
         $this->assertEmpty($out, "Output from adding mod prediction: $out");
     }
 }

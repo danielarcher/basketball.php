@@ -1,4 +1,10 @@
 <div wire:poll.1000ms class="relative w-[1920px] h-[1080px]">
+    {{--Faker for Testing--}}
+    <div class="absolute top-0 left-0 p-4 flex gap-4">
+        <button wire:click="fakePrediction" class="border p-4 rounded hover:bg-gray-100 transition">Create fake prediction</button>
+        <button wire:click="fakePlay" class="border p-4 rounded hover:bg-gray-100 transition">Fake user select option</button>
+        <button wire:click="fakeResolve" class="border p-4 rounded hover:bg-gray-100 transition">Fake resolve</button>
+    </div>
     @if ($prompt !== '')
         <div class="absolute top-8 right-8 w-256 text-white font-mono border border-[#787F85] bg-[#1A1D1E] py-8 px-12 flex flex-col gap-4">
             <div class="text-2xl lowercase">{{ $prompt }}</div>

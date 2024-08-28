@@ -9,7 +9,6 @@ class PredictionHandler
 {
     /**
      * @param Array<string, PredictionUser> $users
-     * @param Prediction|null $prediction
      */
     function __construct(public array $users = [], public ?Prediction $prediction = NULL)
     {
@@ -48,14 +47,8 @@ class PredictionHandler
                 return "@" . $msg->from . ": there is an active prediction";
             }
 
-            $pred = new Prediction($msg);
-            if (!$pred->valid) {
-                Log::info("Invalid prediction", ["msg" => $msg]);
-                return "@" . $msg->from . ": Invalid prediction syntax";
-            }
-
-            $this->prediction = $pred;
-            Log::info("Prediction created", ["prediction" => $pred]);
+            $this->prediction = new Prediction($msg);
+            Log::info("Prediction created", ["prediction" => $this->prediction]);
             return "";
         }
 
@@ -66,10 +59,10 @@ class PredictionHandler
                 return "@" . $msg->from . ": there is no active prediction";
             }
 
-            $winner = substr($msg->text, 3);
+            $winner = intval(substr($msg->text, 3));
             Log::info("Resolving prediction", ["winner" => $winner]);
-            $winner = intval($winner);
             if ($winner == 0) {
+                Log::error("Winner is 0", ["winner" => $winner]);
                 return "@" . $msg->from . ": invalid r syntax e.g.: !r 1";
             }
 

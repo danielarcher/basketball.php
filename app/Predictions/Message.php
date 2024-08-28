@@ -11,7 +11,6 @@ class Message
     public int $pointsPredicted;
     public int $predictedIndex;
 
-
     public $mods = [
         "nightshadedude" => true,
         "beastco" => true,
@@ -22,73 +21,43 @@ class Message
 
     function __construct(string $from, string $text)
     {
-        $text = trim($text);
-
         $this->from = $from;
         $this->text = trim($text);
-
-        $lower = strtolower($from);
-        $this->super = isset($this->mods[$lower]) && $this->mods[$lower];
-
-        if (strlen($text) < 2) {
-            $this->cmd = "NONE";
-        } else {
-            $this->cmd = explode(" ", substr($text, 1), 2)[0];
-        }
-
-        $this->pointsPredicted = 0;
-        switch ($this->cmd) {
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-            case "5":
-                $items = explode(" ", $text);
-                if (count($items) !== 2) {
-                    $this->pointsPredicted = 0;
-                    return;
-                }
-                $this->pointsPredicted = intval($items[1]);
-        }
-
+        $this->super = $this->isSuper();
+        $this->cmd = preg_match('/!(\w+)/', $text, $matches) ? $matches[1] : "NONE";
+        $this->pointsPredicted = match ($this->cmd) {
+            "1", "2", "3", "4", "5" => intval(explode(" ", $text)[1]),
+            default => 0,
+        };
         $this->predictedIndex = intval($this->cmd) - 1;
     }
 
-    function __toString()
+    public function isSuper(): bool
     {
-        return "PPMessage($this->from, $this->text, $this->cmd, " . strval($this->super) . ")";
+        return ($this->mods[strtolower($this->from)] ?? false) == true;
     }
 
-    function isValid()
+    function __toString(): string
+    {
+        return "PPMessage($this->from, $this->text, $this->cmd, " . $this->super . ")";
+    }
+
+    function isValid(): bool
     {
         if (!str_starts_with($this->text, "!")) {
             return false;
         }
 
         $isModMessage = $this->cmd == "p" || $this->cmd == "r";
-        if ($isModMessage && $this->super) {
-            return true;
-        } else if ($isModMessage) {
-            return false;
+        if ($isModMessage) {
+            return $this->super;
         }
 
-        switch ($this->cmd) {
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-            case "5":
-                return $this->pointsPredicted > 0;
-            case "c":
-                return $this->text === "!c";
-            case "r":
-                if (strlen($this->text) === 4) {
-                    $parts = explode(" ", $this->text);
-                    if (count($parts) == 2) {
-                        return intval($parts[1]) > 0;
-                    }
-                }
-        }
-        return false;
+        return match ($this->cmd) {
+            "1", "2", "3", "4", "5" => $this->pointsPredicted > 0,
+            "c" => $this->text === "!c",
+            "r" => strlen($this->text) === 4 && intval(explode(" ", $this->text)[1]) > 0,
+            default => false,
+        };
     }
 }

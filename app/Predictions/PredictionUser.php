@@ -6,16 +6,11 @@ use Illuminate\Support\Facades\Log;
 
 class PredictionUser
 {
-    public string $name = "";
-    public int $points = 0;
-    /** @var Array<string, UserPrediction> */
-    public array $predictions = [];
-
-    function __construct(string $name)
+    /**
+     * @param Array<string, UserPrediction> $predictions
+     */
+    function __construct(public string $name, public int $points = 1000, public array $predictions = [])
     {
-        $this->name = $name;
-        $this->points = 1000;
-        $this->predictions = [];
     }
 
     public function __toString(): string

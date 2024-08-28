@@ -4,18 +4,11 @@ namespace App\Predictions;
 
 class UserPrediction
 {
-    public int $points = 0;
-    public int $option = 0;
-    public bool $resolved = false;
-
-    function __construct($points, $option)
+    function __construct(public int $points, public int $option, public bool $resolved = false)
     {
-        $this->points = $points;
-        $this->option = $option;
-        $this->resolved = false;
     }
 
-    function __toString()
+    function __toString(): string
     {
         return "PPUserPrediction($this->option): $this->points";
     }

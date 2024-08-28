@@ -4,26 +4,20 @@ namespace App\Predictions;
 
 class Prediction
 {
-    public bool $valid;
-    public string $prediction;
-    /** @var Array<Option> */
-    public array $options;
-
-    // !p <time> !ntehountehou !noehunoetuh
-    function __construct(Message $msg)
+    /**
+     * @param Array<Option> $options
+     */
+    function __construct(Message $msg, public array $options = [], public string $prediction = "")
     {
-        $this->options = [];
-
         $options = explode("!", $msg->text);
         foreach (array_slice($options, 2) as $option) {
-            array_push($this->options, new Option($option));
+            $this->options[] = new Option($option);
         }
 
-        $this->valid = true;
         $this->prediction = substr($options[1], 2);
     }
 
-    public function totalPoints()
+    public function totalPoints(): int
     {
         $total = 0;
         foreach ($this->options as $option) {

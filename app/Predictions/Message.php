@@ -11,14 +11,6 @@ class Message
     public int $pointsPredicted;
     public int $predictedIndex;
 
-    public $mods = [
-        "nightshadedude" => true,
-        "beastco" => true,
-        "samhuckabee" => true,
-        "theprimeagen" => true,
-        "teej_dv" => true,
-    ];
-
     function __construct(string $from, string $text)
     {
         $this->from = $from;
@@ -34,7 +26,7 @@ class Message
 
     public function isSuper(): bool
     {
-        return ($this->mods[strtolower($this->from)] ?? false) == true;
+        return in_array(strtolower($this->from), config('predictions.mods', []));
     }
 
     function __toString(): string

@@ -2,29 +2,30 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+
 class PP
 {
-    /** @var Array<string, PPUser> */
-    public array $users;
-
-    public ?PPPrediction $prediction = NULL;
-
-    function __construct()
+    /**
+     * @param Array<string, PPUser> $users
+     * @param PPPrediction|null $prediction
+     */
+    function __construct(public array $users = [], public ?PPPrediction $prediction = NULL)
     {
-        $this->users = [];
-        $this->prediction = NULL;
     }
 
-    function getUser(string $from)
+    function getUser(string $from): PPUser
     {
-        if (!isset($this->users[$from])) {
-            $this->users[$from] = new PPUser($from);
-        }
-
-        return $this->users[$from];
+        return $this->users[$from] ??= new PPUser($from);
     }
 
-    public function pushMessage(string $from, string $text)
+    public static function load(): self
+    {
+        return Cache::get('pp', new self());
+    }
+
+    public function pushMessage(string $from, string $text): string
     {
         $msg = new PPMessage($from, $text);
         $usr = $this->getUser($from);
@@ -83,5 +84,25 @@ class PP
             $usr->predict($this->prediction, $msg->pointsPredicted, $msg->predictedIndex);
         }
         return "";
+    }
+
+    public function save(): void
+    {
+        Log::info("Saving PP");
+        if ($this->prediction !== NULL) {
+            $predictions = $this->prediction->options;
+            $predictions = array_map(function ($prediction) {
+                return [
+                    'option' => $prediction->option,
+                    'points' => $prediction->points,
+                ];
+            }, $predictions);
+            Cache::put("prediction_prompt", $this->prediction->prediction);
+            Cache::put("prediction_options", $predictions);
+        } else {
+            Cache::put("prediction_prompt", "");
+        }
+        Log::info("Saved PP", ["users" => $this->users, "prediction" => $this->prediction]);
+        Cache::put('pp', $this);
     }
 }

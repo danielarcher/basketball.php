@@ -1,7 +1,8 @@
 <?php
 
 namespace App;
-require_once("./app/PP.php");
+
+require __DIR__ . '/../vendor/autoload.php';
 
 $tests = [
     ["!c", "foobar", true],

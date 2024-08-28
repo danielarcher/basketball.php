@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
-class PPMessage
+class Message
 {
     public string $text;
     public string $from;

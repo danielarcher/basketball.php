@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\PP;
+use App\Predictions\PredictionHandler;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -82,7 +82,7 @@ class IrcListener extends Command
             die("Connection closed immediately after opening.\n");
         }
 
-        $pp = new PP();
+        $pp = new PredictionHandler();
 
         while (!feof($socket)) {
             $data = fgets($socket, 512);

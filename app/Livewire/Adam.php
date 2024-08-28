@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use App\PP;
-use App\Scores;
+use App\Predictions\PredictionHandler;
+use App\Predictions\Scores;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
@@ -33,7 +33,7 @@ class Adam extends Component
 
     public function fakePrediction()
     {
-        $pp = PP::load();
+        $pp = PredictionHandler::load();
         $pp->pushMessage('teej_dv', '!p testing !first !second !third');
         $pp->save();
     }
@@ -41,7 +41,7 @@ class Adam extends Component
     public function fakePlay()
     {
         logger()->info("Fake play");
-        $pp = PP::load();
+        $pp = PredictionHandler::load();
         $option = mt_rand(1,3);
         $amount = mt_rand(1, 300);
         $pp->pushMessage(mt_rand(), "!{$option} $amount");
@@ -50,7 +50,7 @@ class Adam extends Component
 
     public function fakeResolve()
     {
-        $pp = PP::load();
+        $pp = PredictionHandler::load();
         $pp->pushMessage('teej_dv', '!r 1');
         $pp->save();
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
 use Illuminate\Support\Facades\Cache;
 

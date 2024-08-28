@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
-class PPUserPrediction
+class UserPrediction
 {
     public int $points = 0;
     public int $option = 0;

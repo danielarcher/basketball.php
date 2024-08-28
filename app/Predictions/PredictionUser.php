@@ -1,14 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
 use Illuminate\Support\Facades\Log;
 
-class PPUser
+class PredictionUser
 {
     public string $name = "";
     public int $points = 0;
-    /** @var Array<string, PPUserPrediction> */
+    /** @var Array<string, UserPrediction> */
     public array $predictions = [];
 
     function __construct(string $name)
@@ -23,7 +23,7 @@ class PPUser
         return "user: $this->name -- $this->points";
     }
 
-    public function predict(PPPrediction $pred, int $point, int $option): void
+    public function predict(Prediction $pred, int $point, int $option): void
     {
         if (isset($this->predictions[$pred->prediction]) && $prev = $this->predictions[$pred->prediction]) {
             if ($prev->resolved) {
@@ -43,11 +43,11 @@ class PPUser
         }
 
         $this->points -= $pointsBet;
-        $this->predictions[$pred->prediction] = new PPUserPrediction($pointsBet, $option);
+        $this->predictions[$pred->prediction] = new UserPrediction($pointsBet, $option);
         $pred->options[$option]->points += $pointsBet;
     }
 
-    public function resolve(PPPrediction $pred, int $winningOption): void
+    public function resolve(Prediction $pred, int $winningOption): void
     {
         $winningTotalPoints = $pred->totalPoints();
         if ($winningTotalPoints == 0) {

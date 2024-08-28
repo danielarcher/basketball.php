@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\PP;
+use App\Predictions\PredictionHandler;
 use Tests\TestCase;
 
 class PredictionScoreTest extends TestCase
 {
     public function test_prediction_points_new_prediction()
     {
-        $pp = new PP();
+        $pp = new PredictionHandler();
         $out = $pp->pushMessage("theprimeagen", "!p Will teej make his first basket? !one option !two options !three twitch sucks");
         $this->assertEmpty($out, "failed:  output from adding mod prediction: $out");
         $this->assertNotNull($pp->prediction, "failed: prediction was not created");
@@ -17,7 +17,7 @@ class PredictionScoreTest extends TestCase
 
     public function test_prediction_points_full_calculation()
     {
-        $pp = new PP();
+        $pp = new PredictionHandler();
         $pp->pushMessage("theprimeagen", "!p Will teej make his first basket? !one option !two options !three twitch sucks");
         $pp->pushMessage("teej", "!1 69");
         $this->assertNotNull($pp->prediction, "failed: prediction was not created");

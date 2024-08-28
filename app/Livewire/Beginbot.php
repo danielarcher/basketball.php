@@ -2,8 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Scores;
-use Illuminate\Support\Facades\Cache;
+use App\Predictions\Scores;
 use Livewire\Component;
 
 

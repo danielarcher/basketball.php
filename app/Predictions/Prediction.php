@@ -1,22 +1,22 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
-class PPPrediction
+class Prediction
 {
     public bool $valid;
     public string $prediction;
-    /** @var Array<PPPredictionOption> */
+    /** @var Array<Option> */
     public array $options;
 
     // !p <time> !ntehountehou !noehunoetuh
-    function __construct(PPMessage $msg)
+    function __construct(Message $msg)
     {
         $this->options = [];
 
         $options = explode("!", $msg->text);
         foreach (array_slice($options, 2) as $option) {
-            array_push($this->options, new PPPredictionOption($option));
+            array_push($this->options, new Option($option));
         }
 
         $this->valid = true;

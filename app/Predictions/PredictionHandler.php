@@ -1,23 +1,23 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-class PP
+class PredictionHandler
 {
     /**
-     * @param Array<string, PPUser> $users
-     * @param PPPrediction|null $prediction
+     * @param Array<string, PredictionUser> $users
+     * @param Prediction|null $prediction
      */
-    function __construct(public array $users = [], public ?PPPrediction $prediction = NULL)
+    function __construct(public array $users = [], public ?Prediction $prediction = NULL)
     {
     }
 
-    function getUser(string $from): PPUser
+    function getUser(string $from): PredictionUser
     {
-        return $this->users[$from] ??= new PPUser($from);
+        return $this->users[$from] ??= new PredictionUser($from);
     }
 
     public static function load(): self
@@ -28,7 +28,7 @@ class PP
     public function pushMessage(string $from, string $text): string
     {
         Log::info("Pushing message", ["from" => $from, "text" => $text]);
-        $msg = new PPMessage($from, $text);
+        $msg = new Message($from, $text);
         $usr = $this->getUser($from);
         Log::info("User", ["user" => $usr]);
 
@@ -48,7 +48,7 @@ class PP
                 return "@" . $msg->from . ": there is an active prediction";
             }
 
-            $pred = new PPPrediction($msg);
+            $pred = new Prediction($msg);
             if (!$pred->valid) {
                 Log::info("Invalid prediction", ["msg" => $msg]);
                 return "@" . $msg->from . ": Invalid prediction syntax";

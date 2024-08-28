@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\PP;
-use App\PPMessage;
+use App\Predictions\PredictionHandler;
+use App\Predictions\Message;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -12,7 +12,7 @@ class PredictionMessageTest extends TestCase
     #[DataProvider("fakePlayProvider")]
     public function test_push_message_returns(string $cmd, string $text, bool $expected): void
     {
-        $msg = new PPMessage($text, $cmd);
+        $msg = new Message($text, $cmd);
         $this->assertEquals($expected, $msg->isValid(), "Failed on ppmessage: $cmd | $text | $expected");
     }
 
@@ -33,7 +33,7 @@ class PredictionMessageTest extends TestCase
 
     public function test_push_message_returns_output(): void
     {
-        $pp = new PP();
+        $pp = new PredictionHandler();
         $out = $pp->pushMessage("theprimeagen", "!p Will teej make his first basket? !one option !two options !three twitch sucks");
         $this->assertEmpty($out, "Output from adding mod prediction: $out");
     }

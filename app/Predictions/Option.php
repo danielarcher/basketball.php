@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Predictions;
 
-class PPPredictionOption
+class Option
 {
     public string $option;
     public int $points;
